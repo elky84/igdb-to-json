@@ -12,6 +12,9 @@ repositories {
 
 dependencies {
     implementation("io.github.husnjak:igdb-api-jvm:1.0.10")
+
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.14.2")
+
     testImplementation(kotlin("test"))
 }
 

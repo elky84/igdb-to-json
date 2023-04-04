@@ -2,8 +2,10 @@ import com.api.igdb.apicalypse.APICalypse
 import com.api.igdb.apicalypse.Sort
 import com.api.igdb.exceptions.RequestException
 import com.api.igdb.request.*
+import com.fasterxml.jackson.databind.ObjectMapper
+import dto.GameInfo
 import proto.*
-import java.io.FileInputStream
+import java.io.File
 import java.util.*
 
 fun main(args: Array<String>) {
@@ -19,29 +21,38 @@ fun main(args: Array<String>) {
     val token = TwitchAuthenticator.requestTwitchToken(clientId, clientSecret)
     IGDBWrapper.setCredentials(clientId, token!!.access_token)
 
-    val game = game(115) ?: return
+    val gameInfos = mutableListOf<GameInfo>()
 
-    println(game.name)
+    for(game in games("id = (115, 120176, 126459, 27789, 125174, 135842)")) {
+        println(game)
 
-    for(video in game.videosList){
-        val videos = video(video.id)
-        for(v in videos) {
-            println("${v}")
+        for(video in game.videosList){
+            val videos = video(video.id)
+            for(v in videos) {
+                println("$v")
+            }
         }
-    }
 
-
-    for(artwork in game.artworksList){
-        val artworks = artwork(artwork.id)
-        for(artworkData in artworks) {
-            println("https://images.igdb.com/igdb/image/upload/t_original/${artworkData.imageId}")
+        for(artwork in game.artworksList){
+            val artworks = artwork(artwork.id)
+            for(artworkData in artworks) {
+                println("https://images.igdb.com/igdb/image/upload/t_original/${artworkData.imageId}.jpg")
+            }
         }
+
+        val covers = cover(game.cover.id)
+        for(cover in covers) {
+            println("https://images.igdb.com/igdb/image/upload/t_original/${cover.imageId}.jpg")
+        }
+
+        val gameInfo = GameInfo(game.id, game.name,
+            "https://images.igdb.com/igdb/image/upload/t_original/${covers.first().imageId}.jpg",
+            "/game/icon/${covers.first().imageId}.jpg")
+
+        gameInfos.add(gameInfo)
     }
 
-    val covers = cover(game.cover.id)
-    for(cover in covers) {
-        println("https://images.igdb.com/igdb/image/upload/t_original/${cover.imageId}")
-    }
+    File("game_list.json").writeText(ObjectMapper().writeValueAsString(gameInfos))
 }
 
 
@@ -97,7 +108,7 @@ fun search(query: String): List<Search>? {
     }
 }
 
-fun games(query: String) : List<Game>? {
+fun games(query: String) : List<Game> {
     val apiCalypse = APICalypse().fields("*").sort("release_dates.date", Sort.DESCENDING)
         .where(query)
     return try{
@@ -105,10 +116,10 @@ fun games(query: String) : List<Game>? {
 
     } catch(e: RequestException) {
         println(e.message)
-        null
+        emptyList()
     } catch(e: RuntimeException) {
         println(e.message)
-        null
+        emptyList()
     }
 }
 
