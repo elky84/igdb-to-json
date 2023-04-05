@@ -1,2 +1,4 @@
 igdb.client-id=
 igdb.client-secret=
+igdb.icon.base-url=
+igdb.game.id=

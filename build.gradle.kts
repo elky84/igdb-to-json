@@ -3,7 +3,7 @@ plugins {
     application
 }
 
-group = "org.example"
+group = "com.elky"
 version = "1.0-SNAPSHOT"
 
 repositories {

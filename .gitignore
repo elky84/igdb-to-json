@@ -38,3 +38,6 @@ out/
 
 ### credential file ###
 application.properties
+
+### output file
+game_list.json

@@ -1,3 +1,3 @@
 
-rootProject.name = "igdb-example"
+rootProject.name = "igdb-to-json"
 

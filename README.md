@@ -1,4 +1,4 @@
-# igdb-example
+# igdb-to-json
 
 ## introduce
 

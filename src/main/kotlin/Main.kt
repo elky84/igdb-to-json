@@ -17,13 +17,15 @@ fun main(args: Array<String>) {
 
     val clientId = properties.getProperty("igdb.client-id")
     val clientSecret = properties.getProperty("igdb.client-secret")
+    val iconBaseUrl = properties.getProperty("igdb.icon.base-url")
+    val gameIds = properties.getProperty("igdb.game.id")
 
     val token = TwitchAuthenticator.requestTwitchToken(clientId, clientSecret)
     IGDBWrapper.setCredentials(clientId, token!!.access_token)
 
     val gameInfos = mutableListOf<GameInfo>()
 
-    for(game in games("id = (115, 120176, 126459, 27789, 125174, 135842)")) {
+    for(game in games("id = $gameIds")) {
         println(game)
 
         for(video in game.videosList){
@@ -47,7 +49,7 @@ fun main(args: Array<String>) {
 
         val gameInfo = GameInfo(game.id, game.name,
             "https://images.igdb.com/igdb/image/upload/t_original/${covers.first().imageId}.jpg",
-            "/game/icon/${covers.first().imageId}.jpg")
+            "${iconBaseUrl}/${covers.first().imageId}.jpg")
 
         gameInfos.add(gameInfo)
     }
