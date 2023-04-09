@@ -3,6 +3,7 @@ import com.api.igdb.apicalypse.Sort
 import com.api.igdb.exceptions.RequestException
 import com.api.igdb.request.*
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import dto.GameInfo
 import proto.*
 import java.io.File
@@ -19,6 +20,7 @@ fun main(args: Array<String>) {
     val clientSecret = properties.getProperty("igdb.client-secret")
     val iconBaseUrl = properties.getProperty("igdb.icon.base-url")
     val gameIds = properties.getProperty("igdb.game.id")
+    val getArtwork = properties.getProperty("igdb.artwork")?.toBoolean() ?: false
 
     val token = TwitchAuthenticator.requestTwitchToken(clientId, clientSecret)
     IGDBWrapper.setCredentials(clientId, token!!.access_token)
@@ -35,26 +37,32 @@ fun main(args: Array<String>) {
             }
         }
 
-        for(artwork in game.artworksList){
-            val artworks = artwork(artwork.id)
-            for(artworkData in artworks) {
-                println("https://images.igdb.com/igdb/image/upload/t_original/${artworkData.imageId}.jpg")
+        if(getArtwork) {
+            for(artwork in game.artworksList){
+                val artworks = artwork(artwork.id)
+                for(artworkData in artworks) {
+                    println("https://images.igdb.com/igdb/image/upload/t_original/${artworkData.imageId}.jpg")
+                }
             }
         }
 
+        var coverData: Cover? = null
         val covers = cover(game.cover.id)
         for(cover in covers) {
             println("https://images.igdb.com/igdb/image/upload/t_original/${cover.imageId}.jpg")
+            coverData = cover
+            break
         }
 
         val gameInfo = GameInfo(game.id, game.name,
-            "https://images.igdb.com/igdb/image/upload/t_original/${covers.first().imageId}.jpg",
-            "${iconBaseUrl}/${covers.first().imageId}.jpg")
+            "https://images.igdb.com/igdb/image/upload/t_original/${coverData?.imageId}.jpg",
+            "${iconBaseUrl}/${coverData?.imageId}.jpg")
 
         gameInfos.add(gameInfo)
     }
 
-    File("game_list.json").writeText(ObjectMapper().writeValueAsString(gameInfos))
+    val objectMapper = ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT)
+    File("game_list.json").writeText(objectMapper.writeValueAsString(gameInfos))
 }
 
 
