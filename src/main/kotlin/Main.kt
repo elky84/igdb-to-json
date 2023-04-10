@@ -56,7 +56,7 @@ fun main(args: Array<String>) {
 
         val gameInfo = GameInfo(game.id, game.name,
             "https://images.igdb.com/igdb/image/upload/t_original/${coverData?.imageId}.jpg",
-            "${iconBaseUrl}/${coverData?.imageId}.jpg")
+            "${iconBaseUrl}/${coverData?.imageId}.png")
 
         gameInfos.add(gameInfo)
     }
