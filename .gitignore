@@ -41,3 +41,4 @@ application.properties
 
 ### output file
 game_list.json
+game_list*.json

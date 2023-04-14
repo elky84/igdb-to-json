@@ -3,3 +3,6 @@ igdb.client-secret=
 igdb.icon.base-url=
 igdb.game.id=
 igdb.artwork=false
+igdb.image.size=t_cover_big
+game-list.file.result=game_list.json
+game-list.file.base=game_list_kr.json
